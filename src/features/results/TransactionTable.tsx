@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Transaction } from '../../types/transaction';
-import { Download } from 'lucide-react';
+import { Download, Store, User } from 'lucide-react';
 
 interface TransactionTableProps {
   transactions: Transaction[];
@@ -66,6 +66,9 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
                 <th className="px-4 py-4 text-[0.65rem] font-semibold tracking-widest text-amber-500 uppercase border-b border-white/10">
                   Payee
                 </th>
+                <th className="px-4 py-4 text-[0.65rem] font-semibold tracking-widest text-violet-400 uppercase border-b border-white/10 text-center">
+                  Type
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -110,6 +113,31 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
                     </td>
                     <td className="px-4 py-4 font-medium text-white max-w-[200px] truncate group-hover:text-amber-400 transition-colors">
                       {t.payee || <span className="text-slate-700 font-normal">&mdash;</span>}
+                    </td>
+                    <td className="px-4 py-4 text-center">
+                      {t.payee_type === 'merchant' ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[0.6rem] font-bold tracking-wider uppercase bg-violet-500/10 text-violet-400 border border-violet-500/20">
+                          <Store size={12} />
+                          Merchant
+                          {t.payee_confidence != null && (
+                            <span className="text-violet-500/60 font-normal ml-0.5">
+                              {Math.round(t.payee_confidence * 100)}%
+                            </span>
+                          )}
+                        </span>
+                      ) : t.payee_type === 'person' ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[0.6rem] font-bold tracking-wider uppercase bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                          <User size={12} />
+                          Person
+                          {t.payee_confidence != null && (
+                            <span className="text-cyan-500/60 font-normal ml-0.5">
+                              {Math.round(t.payee_confidence * 100)}%
+                            </span>
+                          )}
+                        </span>
+                      ) : (
+                        <span className="text-slate-700">&mdash;</span>
+                      )}
                     </td>
                   </tr>
                 );

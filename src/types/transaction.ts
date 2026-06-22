@@ -5,6 +5,8 @@ export interface Transaction {
   withdrawals: string;
   balance: string;
   payee: string | null;
+  payee_type: string | null;
+  payee_confidence: number | null;
 }
 
 export interface ProcessResponse {
