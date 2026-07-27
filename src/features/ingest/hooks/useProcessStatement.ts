@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { uploadStatementPdf, fetchTaskStatus } from '../../../services/api';
+import { uploadStatementPdf, fetchTaskStatus, fetchTaskReport } from '../../../services/api';
 import type { Transaction, CreditRiskReport } from '../../../types/transaction';
 
 export function useProcessStatement() {
@@ -33,7 +33,17 @@ export function useProcessStatement() {
         setProgress(100);
         setStep(2);
         setTransactions(data.transactions || []);
-        setReport(data.report || null);
+
+        let currentReport = data.report || null;
+        if (!currentReport) {
+          try {
+            const reportResp = await fetchTaskReport(taskId);
+            currentReport = reportResp.report || null;
+          } catch (e) {
+            console.warn('Report fetch warning:', e);
+          }
+        }
+        setReport(currentReport);
         setIsProcessing(false);
       } else if (data.status === 'failed') {
         if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
