@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import type { Transaction } from '../../types/transaction';
-import { Download, Store, User, Filter, Search, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Download, Store, User, Filter, Search, AlertTriangle } from 'lucide-react';
 
 interface TransactionTableProps {
   transactions: Transaction[];

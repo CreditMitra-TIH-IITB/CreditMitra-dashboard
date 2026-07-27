@@ -15,7 +15,7 @@ export const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ transactio
 
   transactions.forEach((t) => {
     if (t.direction === 'debit' || (t.withdrawals && parseFloat(t.withdrawals.replace(/,/g, '')) > 0)) {
-      const amt = t.amount ?? parseFloat((t.withdrawals || '0').replace(/,/g, '')) || 0;
+      const amt = (t.amount ?? parseFloat((t.withdrawals || '0').replace(/,/g, ''))) || 0;
       const cat = t.category || 'other';
       categoryTotals[cat] = (categoryTotals[cat] || 0) + amt;
       totalDebitSpend += amt;
