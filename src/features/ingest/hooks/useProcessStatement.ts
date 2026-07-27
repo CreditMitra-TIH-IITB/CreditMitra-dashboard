@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
-import api from '../../../services/api';
-import type { Transaction } from '../../../types/transaction';
+import { uploadStatementPdf, fetchTaskStatus } from '../../../services/api';
+import type { Transaction, CreditRiskReport } from '../../../types/transaction';
 
 export function useProcessStatement() {
   const [file, setFile] = useState<File | null>(null);
@@ -9,7 +9,8 @@ export function useProcessStatement() {
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [transactions, setTransactions] = useState<Transaction[] | null>(null);
-  
+  const [report, setReport] = useState<CreditRiskReport | null>(null);
+
   const pollIntervalRef = useRef<number | null>(null);
 
   const reset = () => {
@@ -19,19 +20,20 @@ export function useProcessStatement() {
     setStep(0);
     setError(null);
     setTransactions(null);
+    setReport(null);
     if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
   };
 
   const pollTaskStatus = useCallback(async (taskId: string) => {
     try {
-      const response = await api.get(`/statements/status/${taskId}`);
-      const data = response.data;
+      const data = await fetchTaskStatus(taskId);
 
       if (data.status === 'completed') {
         if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
         setProgress(100);
         setStep(2);
         setTransactions(data.transactions || []);
+        setReport(data.report || null);
         setIsProcessing(false);
       } else if (data.status === 'failed') {
         if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
@@ -49,7 +51,7 @@ export function useProcessStatement() {
       }
     } catch (err: unknown) {
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-      const e = err as { response?: { data?: { detail?: string } }, message?: string };
+      const e = err as { response?: { data?: { detail?: string } }; message?: string };
       setError(e.response?.data?.detail || e.message || 'Error checking status.');
       setIsProcessing(false);
     }
@@ -63,26 +65,20 @@ export function useProcessStatement() {
     setStep(1);
     setProgress(10);
     setTransactions(null);
-
-    const formData = new FormData();
-    formData.append('pdf', file);
+    setReport(null);
 
     try {
       // 1. Dispatch background task
-      const response = await api.post('/statements/process', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-
-      const taskId = response.data.task_id;
+      const response = await uploadStatementPdf(file);
+      const taskId = response.task_id;
 
       // 2. Poll for status every 1.5 seconds
       pollIntervalRef.current = window.setInterval(() => {
         pollTaskStatus(taskId);
       }, 1500);
-      
     } catch (err: unknown) {
       setProgress(100);
-      const e = err as { response?: { data?: { detail?: string } }, message?: string };
+      const e = err as { response?: { data?: { detail?: string } }; message?: string };
       setError(e.response?.data?.detail || e.message || 'An error occurred uploading the statement.');
       setIsProcessing(false);
     }
@@ -96,6 +92,7 @@ export function useProcessStatement() {
     step,
     error,
     transactions,
+    report,
     processFile,
     reset,
   };
