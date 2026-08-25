@@ -32,7 +32,8 @@ export const LifestyleReport: React.FC<LifestyleReportProps> = ({ report }) => {
               {report.archetype}
             </h2>
             <p className="text-slate-300 text-base leading-relaxed font-light">
-              {report.narrative || 'Alternative-data lifestyle risk assessment computed from statement transactions.'}
+              {report.narrative ||
+                'Alternative-data lifestyle risk assessment computed from statement transactions.'}
             </p>
           </div>
 
@@ -55,7 +56,8 @@ export const LifestyleReport: React.FC<LifestyleReportProps> = ({ report }) => {
               <span className="text-xs text-slate-400">0–100 scale</span>
             </div>
             <p className="text-xs text-slate-400 mb-4">
-              Multi-dimensional spending behavior profile evaluated against the 6 core lifestyle indices.
+              Multi-dimensional spending behavior profile evaluated against the 6 core lifestyle
+              indices.
             </p>
           </div>
 
@@ -66,7 +68,9 @@ export const LifestyleReport: React.FC<LifestyleReportProps> = ({ report }) => {
           <div className="grid grid-cols-3 gap-2 pt-4 border-t border-white/10 text-center text-xs">
             <div className="p-2 rounded-lg bg-slate-950/40 border border-white/5">
               <span className="text-slate-400 block">Digital Maturity</span>
-              <span className="font-semibold text-white">{report.lifestyle.l3_digital_maturity}/100</span>
+              <span className="font-semibold text-white">
+                {report.lifestyle.l3_digital_maturity}/100
+              </span>
             </div>
             <div className="p-2 rounded-lg bg-slate-950/40 border border-white/5">
               <span className="text-slate-400 block">Commitment</span>
@@ -74,7 +78,9 @@ export const LifestyleReport: React.FC<LifestyleReportProps> = ({ report }) => {
             </div>
             <div className="p-2 rounded-lg bg-slate-950/40 border border-white/5">
               <span className="text-slate-400 block">Risk Appetite</span>
-              <span className="font-semibold text-white">{report.lifestyle.l6_risk_appetite}/100</span>
+              <span className="font-semibold text-white">
+                {report.lifestyle.l6_risk_appetite}/100
+              </span>
             </div>
           </div>
         </div>
@@ -86,14 +92,19 @@ export const LifestyleReport: React.FC<LifestyleReportProps> = ({ report }) => {
               <Zap className="w-5 h-5 text-emerald-400" />
               Cash-Flow & Behavioral Signals
             </h3>
-            <span className="text-xs text-slate-400">{report.features.months_covered} Months Evaluated</span>
+            <span className="text-xs text-slate-400">
+              {report.features.months_covered} Months Evaluated
+            </span>
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div className="p-3 rounded-xl bg-slate-950/60 border border-white/5 space-y-1">
               <span className="text-xs text-slate-400">Monthly Net Income</span>
               <p className="font-bold text-lg text-white">
-                ₹{report.features.monthly_income ? report.features.monthly_income.toLocaleString('en-IN') : '0'}
+                ₹
+                {report.features.monthly_income
+                  ? report.features.monthly_income.toLocaleString('en-IN')
+                  : '0'}
               </p>
               <span className="text-[10px] text-emerald-400">
                 {report.features.salary_detected ? '✓ Salary Detected' : 'Gig / Irregular Credits'}
@@ -118,7 +129,9 @@ export const LifestyleReport: React.FC<LifestyleReportProps> = ({ report }) => {
 
             <div className="p-3 rounded-xl bg-slate-950/60 border border-white/5 space-y-1">
               <span className="text-xs text-slate-400">Cheque / NACH Bounces</span>
-              <p className={`font-bold text-lg ${report.features.bounce_count > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+              <p
+                className={`font-bold text-lg ${report.features.bounce_count > 0 ? 'text-rose-400' : 'text-emerald-400'}`}
+              >
                 {report.features.bounce_count}
               </p>
               <span className="text-[10px] text-slate-400">Returned transactions</span>
@@ -128,15 +141,21 @@ export const LifestyleReport: React.FC<LifestyleReportProps> = ({ report }) => {
           <div className="pt-2 border-t border-white/10 text-xs space-y-2">
             <div className="flex justify-between items-center text-slate-300">
               <span>Merchant Resolution Rate:</span>
-              <span className="font-semibold text-white">{Math.round((report.features.merchant_resolution_rate || 0) * 100)}%</span>
+              <span className="font-semibold text-white">
+                {Math.round((report.features.merchant_resolution_rate || 0) * 100)}%
+              </span>
             </div>
             <div className="flex justify-between items-center text-slate-300">
               <span>BNPL Merchants Count:</span>
-              <span className="font-semibold text-white">{report.features.bnpl_merchant_count || 0}</span>
+              <span className="font-semibold text-white">
+                {report.features.bnpl_merchant_count || 0}
+              </span>
             </div>
             <div className="flex justify-between items-center text-slate-300">
               <span>Merchant Loyalty Index:</span>
-              <span className="font-semibold text-white">{Math.round((report.lifestyle.merchant_loyalty || 0) * 100)}%</span>
+              <span className="font-semibold text-white">
+                {Math.round((report.lifestyle.merchant_loyalty || 0) * 100)}%
+              </span>
             </div>
           </div>
         </div>

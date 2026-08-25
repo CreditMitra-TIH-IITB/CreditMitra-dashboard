@@ -1,5 +1,11 @@
 export type RiskFlag = 'gambling' | 'bnpl_lending' | 'crypto' | null;
-export type LifestyleDim = 'essential' | 'aspirational' | 'commitment' | 'leverage' | 'risk' | 'neutral';
+export type LifestyleDim =
+  | 'essential'
+  | 'aspirational'
+  | 'commitment'
+  | 'leverage'
+  | 'risk'
+  | 'neutral';
 export type RecurringType = 'adhoc' | 'subscription' | 'emi_like' | 'payout_source';
 export type Direction = 'credit' | 'debit';
 export type ScoreBlock = 'cashflow' | 'lifestyle';

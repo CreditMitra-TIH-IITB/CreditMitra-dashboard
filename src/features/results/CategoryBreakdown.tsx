@@ -14,7 +14,10 @@ export const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ transactio
   let totalDebitSpend = 0;
 
   transactions.forEach((t) => {
-    if (t.direction === 'debit' || (t.withdrawals && parseFloat(t.withdrawals.replace(/,/g, '')) > 0)) {
+    if (
+      t.direction === 'debit' ||
+      (t.withdrawals && parseFloat(t.withdrawals.replace(/,/g, '')) > 0)
+    ) {
       const amt = (t.amount ?? parseFloat((t.withdrawals || '0').replace(/,/g, ''))) || 0;
       const cat = t.category || 'other';
       categoryTotals[cat] = (categoryTotals[cat] || 0) + amt;
@@ -47,7 +50,8 @@ export const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ transactio
           Spend by Category
         </h3>
         <span className="text-xs text-slate-400">
-          Total Debits: ₹{totalDebitSpend ? Math.round(totalDebitSpend).toLocaleString('en-IN') : '0'}
+          Total Debits: ₹
+          {totalDebitSpend ? Math.round(totalDebitSpend).toLocaleString('en-IN') : '0'}
         </span>
       </div>
 

@@ -29,10 +29,12 @@ export const RadarChart: React.FC<RadarChartProps> = ({ lifestyle }) => {
   };
 
   // Polygon coordinates for lifestyle values
-  const polygonPoints = axes.map((axis, i) => {
-    const { x, y } = getCoordinates(i, axis.value);
-    return `${x},${y}`;
-  }).join(' ');
+  const polygonPoints = axes
+    .map((axis, i) => {
+      const { x, y } = getCoordinates(i, axis.value);
+      return `${x},${y}`;
+    })
+    .join(' ');
 
   // Grid concentric polygons (20%, 40%, 60%, 80%, 100%)
   const gridLevels = [0.2, 0.4, 0.6, 0.8, 1.0];
@@ -42,10 +44,12 @@ export const RadarChart: React.FC<RadarChartProps> = ({ lifestyle }) => {
       <svg width={size} height={size} className="overflow-visible">
         {/* Background Concentric Grids */}
         {gridLevels.map((level, levelIdx) => {
-          const points = axes.map((_, i) => {
-            const { x, y } = getCoordinates(i, 100 * level);
-            return `${x},${y}`;
-          }).join(' ');
+          const points = axes
+            .map((_, i) => {
+              const { x, y } = getCoordinates(i, 100 * level);
+              return `${x},${y}`;
+            })
+            .join(' ');
 
           return (
             <polygon
@@ -88,15 +92,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({ lifestyle }) => {
         {axes.map((axis, i) => {
           const { x, y } = getCoordinates(i, axis.value);
           return (
-            <circle
-              key={i}
-              cx={x}
-              cy={y}
-              r="4"
-              fill="#fbbf24"
-              stroke="#0f172a"
-              strokeWidth="2"
-            />
+            <circle key={i} cx={x} cy={y} r="4" fill="#fbbf24" stroke="#0f172a" strokeWidth="2" />
           );
         })}
 

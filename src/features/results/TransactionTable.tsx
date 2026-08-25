@@ -10,20 +10,23 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  if (!transactions || transactions.length === 0) return null;
+  // Every hook has to run before the empty-list guard below. The list goes
+  // from empty to populated when a statement finishes processing, so an early
+  // return above these would change the hook count between renders and crash.
+  const rows = useMemo(() => transactions ?? [], [transactions]);
 
   // Extract unique categories for filter dropdown
   const categories = useMemo(() => {
     const set = new Set<string>();
-    transactions.forEach((t) => {
+    rows.forEach((t) => {
       if (t.category) set.add(t.category);
     });
     return Array.from(set).sort();
-  }, [transactions]);
+  }, [rows]);
 
   // Filter transactions by category & search query
   const filteredTransactions = useMemo(() => {
-    return transactions.filter((t) => {
+    return rows.filter((t) => {
       const matchesCategory = selectedCategory === 'all' || t.category === selectedCategory;
       const matchesSearch =
         !searchQuery ||
@@ -33,10 +36,12 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
 
       return matchesCategory && matchesSearch;
     });
-  }, [transactions, selectedCategory, searchQuery]);
+  }, [rows, selectedCategory, searchQuery]);
+
+  if (rows.length === 0) return null;
 
   const handleDownload = () => {
-    const blob = new Blob([JSON.stringify(transactions, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(rows, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -45,8 +50,8 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
     URL.revokeObjectURL(url);
   };
 
-  const payeeCount = transactions.filter((t) => t.payee).length;
-  const coverage = Math.round((payeeCount / transactions.length) * 100);
+  const payeeCount = rows.filter((t) => t.payee).length;
+  const coverage = Math.round((payeeCount / rows.length) * 100);
 
   return (
     <div className="w-full animate-in fade-in slide-in-from-bottom-8 duration-700 fill-mode-both space-y-4">
@@ -55,7 +60,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
         <div>
           <h3 className="font-serif text-2xl font-medium text-white">Transaction Ledger</h3>
           <p className="text-sm text-slate-400 mt-1">
-            {transactions.length} total rows &middot; {coverage}% payee coverage
+            {rows.length} total rows &middot; {coverage}% payee coverage
           </p>
         </div>
         <button
@@ -87,7 +92,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="bg-slate-950 text-xs text-slate-300 border border-white/10 rounded-lg px-3 py-1.5 focus:outline-none focus:border-amber-500"
           >
-            <option value="all">All Categories ({transactions.length})</option>
+            <option value="all">All Categories ({rows.length})</option>
             {categories.map((cat) => (
               <option key={cat} value={cat}>
                 {cat.replace(/_/g, ' ')}
@@ -137,9 +142,16 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
               ) : (
                 filteredTransactions.map((t, idx) => (
                   <tr key={idx} className="hover:bg-white/[0.03] transition-colors group">
-                    <td className="px-4 py-3 text-xs text-slate-500 text-center font-mono">{idx + 1}</td>
-                    <td className="px-4 py-3 text-xs text-slate-300 font-mono whitespace-nowrap">{t.date}</td>
-                    <td className="px-4 py-3 text-xs text-slate-300 max-w-xs font-mono truncate" title={t.particulars}>
+                    <td className="px-4 py-3 text-xs text-slate-500 text-center font-mono">
+                      {idx + 1}
+                    </td>
+                    <td className="px-4 py-3 text-xs text-slate-300 font-mono whitespace-nowrap">
+                      {t.date}
+                    </td>
+                    <td
+                      className="px-4 py-3 text-xs text-slate-300 max-w-xs font-mono truncate"
+                      title={t.particulars}
+                    >
                       {t.particulars}
                     </td>
 

@@ -65,7 +65,9 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({ score, band }) => {
           const rad = (180 - angle) * (Math.PI / 180);
           const nx = cx + radius * Math.cos(rad);
           const ny = cy - radius * Math.sin(rad);
-          return <circle cx={nx} cy={ny} r="6" fill="#ffffff" className="shadow-lg animate-pulse" />;
+          return (
+            <circle cx={nx} cy={ny} r="6" fill="#ffffff" className="shadow-lg animate-pulse" />
+          );
         })()}
       </svg>
 

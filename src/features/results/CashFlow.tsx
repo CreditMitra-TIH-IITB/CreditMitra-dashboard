@@ -32,7 +32,9 @@ export const CashFlow: React.FC<CashFlowProps> = ({ transactions }) => {
           <BarChart3 className="w-5 h-5 text-emerald-400" />
           Cash-Flow Overview
         </h3>
-        <span className={`text-xs font-semibold ${netFlow >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+        <span
+          className={`text-xs font-semibold ${netFlow >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}
+        >
           Net Flow: {netFlow >= 0 ? '+' : ''}₹{Math.round(netFlow).toLocaleString('en-IN')}
         </span>
       </div>

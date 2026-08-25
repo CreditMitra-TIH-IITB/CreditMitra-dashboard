@@ -89,7 +89,9 @@ export function useProcessStatement() {
     } catch (err: unknown) {
       setProgress(100);
       const e = err as { response?: { data?: { detail?: string } }; message?: string };
-      setError(e.response?.data?.detail || e.message || 'An error occurred uploading the statement.');
+      setError(
+        e.response?.data?.detail || e.message || 'An error occurred uploading the statement.',
+      );
       setIsProcessing(false);
     }
   }, [file, pollTaskStatus]);
