@@ -6,9 +6,6 @@ const isMock = import.meta.env.VITE_USE_MOCK === '1' || import.meta.env.VITE_USE
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/v1',
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 export async function uploadStatementPdf(file: File): Promise<ProcessResponse> {
@@ -23,11 +20,7 @@ export async function uploadStatementPdf(file: File): Promise<ProcessResponse> {
   const formData = new FormData();
   formData.append('pdf', file);
 
-  const response = await api.post<ProcessResponse>('/statements/process', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  const response = await api.post<ProcessResponse>('/statements/process', formData);
   return response.data;
 }
 
