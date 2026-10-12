@@ -1,6 +1,14 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { uploadStatementPdf, fetchTaskStatus, fetchTaskReport } from '../../../services/api';
 import type { Transaction, CreditRiskReport } from '../../../types/transaction';
+
+const POLL_INTERVAL_MS = 1500;
+// Consecutive failed polls tolerated before giving up. Processing a statement
+// takes minutes, so one dropped request (engine busy, network blip) must not
+// surface as an error while the task is still running fine on the server.
+const MAX_CONSECUTIVE_POLL_FAILURES = 5;
+
+type ApiError = { response?: { status?: number; data?: { detail?: string } }; message?: string };
 
 export function useProcessStatement() {
   const [file, setFile] = useState<File | null>(null);
@@ -12,8 +20,19 @@ export function useProcessStatement() {
   const [report, setReport] = useState<CreditRiskReport | null>(null);
 
   const pollIntervalRef = useRef<number | null>(null);
+  const pollInFlightRef = useRef(false);
+  const pollFailuresRef = useRef(0);
+
+  const stopPolling = () => {
+    if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+    pollIntervalRef.current = null;
+  };
+
+  // Stop polling if the component unmounts mid-task.
+  useEffect(() => stopPolling, []);
 
   const reset = () => {
+    stopPolling();
     setFile(null);
     setIsProcessing(false);
     setProgress(0);
@@ -21,15 +40,19 @@ export function useProcessStatement() {
     setError(null);
     setTransactions(null);
     setReport(null);
-    if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
   };
 
   const pollTaskStatus = useCallback(async (taskId: string) => {
+    // Skip a tick rather than stack requests when the engine is slow to answer.
+    if (pollInFlightRef.current) return;
+    pollInFlightRef.current = true;
+
     try {
       const data = await fetchTaskStatus(taskId);
+      pollFailuresRef.current = 0;
 
       if (data.status === 'completed') {
-        if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+        stopPolling();
         setProgress(100);
         setStep(2);
         setTransactions(data.transactions || []);
@@ -46,7 +69,7 @@ export function useProcessStatement() {
         setReport(currentReport);
         setIsProcessing(false);
       } else if (data.status === 'failed') {
-        if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+        stopPolling();
         setProgress(100);
         setError(data.error || 'Task failed during processing.');
         setIsProcessing(false);
@@ -60,16 +83,30 @@ export function useProcessStatement() {
         });
       }
     } catch (err: unknown) {
-      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
-      const e = err as { response?: { data?: { detail?: string } }; message?: string };
-      setError(e.response?.data?.detail || e.message || 'Error checking status.');
-      setIsProcessing(false);
+      const e = err as ApiError;
+      // A 404 means the task is gone — retrying cannot fix that.
+      const fatal = e.response?.status === 404;
+      pollFailuresRef.current += 1;
+      if (fatal || pollFailuresRef.current >= MAX_CONSECUTIVE_POLL_FAILURES) {
+        stopPolling();
+        setError(e.response?.data?.detail || e.message || 'Error checking status.');
+        setIsProcessing(false);
+      } else {
+        console.warn(
+          `Status poll failed (${pollFailuresRef.current}/${MAX_CONSECUTIVE_POLL_FAILURES}), retrying:`,
+          e.message,
+        );
+      }
+    } finally {
+      pollInFlightRef.current = false;
     }
   }, []);
 
   const processFile = useCallback(async () => {
     if (!file) return;
 
+    stopPolling();
+    pollFailuresRef.current = 0;
     setIsProcessing(true);
     setError(null);
     setStep(1);
@@ -82,13 +119,13 @@ export function useProcessStatement() {
       const response = await uploadStatementPdf(file);
       const taskId = response.task_id;
 
-      // 2. Poll for status every 1.5 seconds
+      // 2. Poll for status
       pollIntervalRef.current = window.setInterval(() => {
         pollTaskStatus(taskId);
-      }, 1500);
+      }, POLL_INTERVAL_MS);
     } catch (err: unknown) {
       setProgress(100);
-      const e = err as { response?: { data?: { detail?: string } }; message?: string };
+      const e = err as ApiError;
       setError(
         e.response?.data?.detail || e.message || 'An error occurred uploading the statement.',
       );

@@ -8,15 +8,12 @@ import { CategoryBreakdown } from '../results/CategoryBreakdown';
 import { CashFlow } from '../results/CashFlow';
 import { useProcessStatement } from '../ingest/hooks/useProcessStatement';
 import { Award, PieChart, Table, FileText, AlertCircle } from 'lucide-react';
-import { MOCK_REPORT } from '../../services/mockData';
 
 export const Dashboard: React.FC = () => {
   const { file, setFile, isProcessing, progress, step, error, transactions, report, processFile } =
     useProcessStatement();
 
   const [activeTab, setActiveTab] = useState<'report' | 'analytics' | 'ledger'>('report');
-
-  const displayReport = report || (transactions && transactions.length > 0 ? MOCK_REPORT : null);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-6 py-8 md:py-12 flex flex-col gap-8 flex-1">
@@ -93,19 +90,23 @@ export const Dashboard: React.FC = () => {
           </div>
 
           {/* Active Tab Views */}
-          {activeTab === 'report' && displayReport && (
-            <div className="space-y-4">
-              {!report && (
-                <div className="flex items-center gap-2 text-xs text-amber-400 bg-amber-500/10 border border-amber-500/20 px-3 py-2 rounded-lg">
-                  <AlertCircle className="w-4 h-4" />
-                  <span>
-                    Showing sample report format (scoring was computed for recent transactions).
-                  </span>
+          {/* Never substitute sample data here: a placeholder score shown next to a
+              real statement reads as that borrower's score. */}
+          {activeTab === 'report' &&
+            (report ? (
+              <LifestyleReport report={report} />
+            ) : (
+              <div className="flex items-start gap-3 text-sm text-amber-300 bg-amber-500/10 border border-amber-500/20 px-4 py-3 rounded-lg">
+                <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium">Credit report unavailable for this statement</p>
+                  <p className="text-xs text-amber-400/80 mt-1">
+                    Transactions were extracted, but the statement did not carry enough parsed data
+                    to compute a score. The ledger and analytics tabs are still accurate.
+                  </p>
                 </div>
-              )}
-              <LifestyleReport report={displayReport} />
-            </div>
-          )}
+              </div>
+            ))}
 
           {activeTab === 'analytics' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-500">
