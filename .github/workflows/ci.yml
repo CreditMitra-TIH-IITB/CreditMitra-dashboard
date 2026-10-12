@@ -92,3 +92,26 @@ jobs:
           name: dist
           path: dist/
           retention-days: 7
+
+  docker:
+    name: Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: docker build -t creditmitra-dashboard:ci .
+
+      - name: Smoke test
+        run: |
+          docker run -d --name dashboard -p 8080:80 creditmitra-dashboard:ci
+          for i in $(seq 1 15); do
+            if curl -fsS http://localhost:8080/ | grep -q '<div id="root">'; then
+              # A client-side route must fall back to index.html, not 404.
+              curl -fsS http://localhost:8080/some/client/route | grep -q '<div id="root">'
+              exit $?
+            fi
+            sleep 2
+          done
+          docker logs dashboard
+          exit 1
