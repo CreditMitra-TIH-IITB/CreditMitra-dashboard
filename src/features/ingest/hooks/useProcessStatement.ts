@@ -133,6 +133,20 @@ export function useProcessStatement() {
     }
   }, [file, pollTaskStatus]);
 
+  const loadPreset = useCallback(
+    (presetTransactions: Transaction[], presetReport: CreditRiskReport | null) => {
+      stopPolling();
+      setFile(null);
+      setIsProcessing(false);
+      setProgress(100);
+      setStep(2);
+      setError(null);
+      setTransactions(presetTransactions);
+      setReport(presetReport);
+    },
+    [],
+  );
+
   return {
     file,
     setFile,
@@ -144,5 +158,6 @@ export function useProcessStatement() {
     report,
     processFile,
     reset,
+    loadPreset,
   };
 }
