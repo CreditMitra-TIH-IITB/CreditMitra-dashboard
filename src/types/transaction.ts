@@ -45,6 +45,7 @@ export interface MerchantEnrichment {
 
 export interface FeatureVector {
   salary_detected: boolean;
+  gig_income_detected?: boolean; // recurring gig-platform payouts (engine: Gig Hustler)
   monthly_income: number;
   foir: number;
   net_cashflow: number;
