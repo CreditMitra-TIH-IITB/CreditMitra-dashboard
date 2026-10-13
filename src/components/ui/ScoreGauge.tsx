@@ -21,29 +21,29 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({ score, band }) => {
   const getBandColor = (b: string) => {
     switch (b.toLowerCase()) {
       case 'excellent':
-        return '#10b981'; // emerald-500
+        return '#059669'; // emerald-600
       case 'very good':
-        return '#06b6d4'; // cyan-500
+        return '#0d9488'; // teal-600
       case 'good':
-        return '#f59e0b'; // amber-500
+        return '#d97706'; // amber-600
       case 'fair':
-        return '#f97316'; // orange-500
+        return '#ea580c'; // orange-600
       case 'poor':
       default:
-        return '#ef4444'; // red-500
+        return '#e11d48'; // rose-600
     }
   };
 
   const strokeColor = getBandColor(band);
 
   return (
-    <div className="flex flex-col items-center justify-center relative p-4">
+    <div className="flex flex-col items-center justify-center relative p-3">
       <svg className="w-56 h-32 overflow-visible" viewBox="0 0 200 110">
-        {/* Background track arc */}
+        {/* Background track arc in light slate */}
         <path
           d="M 20 95 A 80 80 0 0 1 180 95"
           fill="none"
-          stroke="rgba(255, 255, 255, 0.1)"
+          stroke="#e2e8f0"
           strokeWidth="14"
           strokeLinecap="round"
         />
@@ -66,19 +66,27 @@ export const ScoreGauge: React.FC<ScoreGaugeProps> = ({ score, band }) => {
           const nx = cx + radius * Math.cos(rad);
           const ny = cy - radius * Math.sin(rad);
           return (
-            <circle cx={nx} cy={ny} r="6" fill="#ffffff" className="shadow-lg animate-pulse" />
+            <circle
+              cx={nx}
+              cy={ny}
+              r="6"
+              fill="#ffffff"
+              stroke={strokeColor}
+              strokeWidth="2.5"
+              className="drop-shadow-sm"
+            />
           );
         })()}
       </svg>
 
       {/* Score Text Overlay */}
       <div className="absolute bottom-2 flex flex-col items-center text-center">
-        <span className="text-4xl font-serif font-bold text-white tracking-tight">{score}</span>
+        <span className="text-4xl font-serif font-bold text-slate-900 tracking-tight">{score}</span>
         <span
-          className="text-xs font-semibold uppercase tracking-widest px-2.5 py-0.5 rounded-full mt-1 border"
+          className="text-[0.6875rem] font-semibold uppercase tracking-widest px-3 py-0.5 rounded-full mt-1 border shadow-2xs"
           style={{
-            borderColor: `${strokeColor}50`,
-            backgroundColor: `${strokeColor}15`,
+            borderColor: `${strokeColor}40`,
+            backgroundColor: `${strokeColor}12`,
             color: strokeColor,
           }}
         >

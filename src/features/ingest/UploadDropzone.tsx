@@ -1,12 +1,15 @@
 import React, { useRef, useState } from 'react';
-import { UploadCloud, FileText } from 'lucide-react';
+import { UploadCloud, FileText, X, Sparkles, Shield, Cpu, Activity } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { SpotlightCard } from '../../components/bits/SpotlightCard';
+import { DEMO_PERSONAS } from '../../services/mockData';
 
 interface UploadDropzoneProps {
   file: File | null;
   onFileSelect: (file: File) => void;
   onProcess: () => void;
   isProcessing: boolean;
+  onSelectPersona?: (personaId: string) => void;
 }
 
 export const UploadDropzone: React.FC<UploadDropzoneProps> = ({
@@ -14,6 +17,7 @@ export const UploadDropzone: React.FC<UploadDropzoneProps> = ({
   onFileSelect,
   onProcess,
   isProcessing,
+  onSelectPersona,
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -46,38 +50,87 @@ export const UploadDropzone: React.FC<UploadDropzoneProps> = ({
   };
 
   return (
-    <div className="w-full relative group">
-      {/* Decorative gradient border effect */}
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500/0 via-amber-500/40 to-amber-500/0 rounded-xl opacity-0 group-hover:opacity-100 transition duration-500 blur-sm pointer-events-none" />
+    <div className="w-full space-y-6">
+      {/* Top Value Badges */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+        <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
+          <div className="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+            <Shield size={14} />
+          </div>
+          <div>
+            <span className="font-semibold text-slate-800 block">100% On-Device</span>
+            <span className="text-[11px] text-slate-400">Zero cloud leakage</span>
+          </div>
+        </div>
 
-      <div className="relative bg-slate-900/50 backdrop-blur-sm border border-white/10 rounded-xl p-8 md:p-12 text-center transition-all duration-300">
-        <h2 className="font-serif text-3xl md:text-4xl font-medium text-white mb-3">
-          Analyze a statement
+        <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
+          <div className="w-7 h-7 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-100">
+            <Cpu size={14} />
+          </div>
+          <div>
+            <span className="font-semibold text-slate-800 block">Docling Parser</span>
+            <span className="text-[11px] text-slate-400">Heterogeneous PDFs</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
+          <div className="w-7 h-7 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100">
+            <Sparkles size={14} />
+          </div>
+          <div>
+            <span className="font-semibold text-slate-800 block">payee-lora LLM</span>
+            <span className="text-[11px] text-slate-400">Local span resolution</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
+          <div className="w-7 h-7 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-100">
+            <Activity size={14} />
+          </div>
+          <div>
+            <span className="font-semibold text-slate-800 block">300–900 Score</span>
+            <span className="text-[11px] text-slate-400">Alternative risk engine</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Upload Spotlight Card */}
+      <SpotlightCard className="p-8 md:p-12 text-center transition-all duration-300 shadow-[0_1px_3px_rgba(15,23,42,0.03),0_12px_32px_-4px_rgba(15,23,42,0.05)]">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200/80 text-amber-900 text-xs font-semibold uppercase tracking-wider mb-4 shadow-2xs">
+          <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+          Automated Credit Underwriting
+        </div>
+
+        <h2 className="font-serif text-3xl md:text-4xl font-semibold text-slate-900 mb-3 tracking-tight">
+          Bank Statement Ingestion Hub
         </h2>
-        <p className="text-slate-400 text-sm md:text-base mb-8 max-w-xl mx-auto">
-          Upload a PDF bank statement. Tables are seamlessly parsed, narrations normalized to a
-          single line, and payees identified per transaction.
+        <p className="text-slate-500 text-sm md:text-base mb-8 max-w-xl mx-auto leading-relaxed">
+          Upload any Indian retail or business bank statement in native PDF format. Tables are extracted, payees normalized, and lifestyle risk computed completely on-device.
         </p>
 
+        {/* Drop Zone Box */}
         <div
           onClick={() => inputRef.current?.click()}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           className={cn(
-            'border border-dashed rounded-lg p-10 mb-6 cursor-pointer transition-all duration-300 flex flex-col items-center justify-center gap-3',
+            'border-2 border-dashed rounded-2xl p-10 mb-6 cursor-pointer transition-all duration-300 flex flex-col items-center justify-center gap-3',
             isDragOver
-              ? 'border-amber-500/50 bg-amber-500/5'
-              : 'border-white/10 hover:border-amber-500/30 hover:bg-white/5',
+              ? 'border-amber-500 bg-amber-50/70 shadow-inner scale-[1.005]'
+              : 'border-slate-200/90 bg-slate-50/60 hover:border-amber-400/80 hover:bg-amber-50/20 hover:shadow-xs',
           )}
         >
-          <div className="p-4 bg-slate-800/50 rounded-full text-amber-500 mb-2">
-            <UploadCloud size={32} />
+          <div className="p-4 bg-amber-50 border border-amber-200/70 rounded-2xl text-amber-600 mb-1 shadow-xs group-hover:scale-105 transition-transform duration-300">
+            <UploadCloud size={36} />
           </div>
-          <div className="text-sm text-slate-400">
-            Drag and drop your PDF here <br />
-            <strong className="text-white font-medium mt-1 inline-block">or click to browse</strong>
+          <div className="text-sm text-slate-600">
+            Drag and drop your PDF bank statement here <br />
+            <strong className="text-slate-900 font-semibold mt-1 inline-block">or click to browse local filesystem</strong>
           </div>
+          <span className="text-[0.6875rem] uppercase tracking-wider text-slate-400 font-medium">
+            Supports HDFC · SBI · ICICI · Axis · Canara · Kotak
+          </span>
         </div>
 
         <input
@@ -88,32 +141,74 @@ export const UploadDropzone: React.FC<UploadDropzoneProps> = ({
           onChange={handleChange}
         />
 
+        {/* Selected File Card */}
         {file && (
-          <div className="flex items-center justify-center gap-2 text-sm text-amber-400 font-mono mb-8 bg-amber-500/10 py-2 px-4 rounded-full w-fit mx-auto border border-amber-500/20">
-            <FileText size={16} />
-            {file.name}
+          <div className="flex items-center justify-between gap-3 text-sm text-amber-900 mb-8 bg-amber-50/90 py-2.5 px-5 rounded-2xl max-w-md mx-auto border border-amber-200 shadow-2xs">
+            <div className="flex items-center gap-2.5 truncate">
+              <FileText size={18} className="text-amber-600 shrink-0" />
+              <div className="text-left truncate">
+                <span className="font-semibold block truncate">{file.name}</span>
+                <span className="text-[11px] text-amber-700/80 font-mono">
+                  {(file.size / 1024).toFixed(1)} KB · Ready for extraction
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (inputRef.current) inputRef.current.value = '';
+                // Trigger parent reset if available
+              }}
+              className="p-1 rounded-full text-amber-700/60 hover:text-amber-900 hover:bg-amber-100 transition-colors"
+            >
+              <X size={16} />
+            </button>
           </div>
         )}
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="px-6 py-2.5 text-sm font-medium text-slate-300 border border-white/10 rounded-lg hover:text-white hover:border-amber-500/50 hover:bg-amber-500/10 transition-all duration-300 w-full sm:w-auto"
+            className="px-6 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:text-slate-900 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200 shadow-xs w-full sm:w-auto"
           >
-            Select file
+            Select PDF File
           </button>
 
           <button
             type="button"
             disabled={!file || isProcessing}
             onClick={onProcess}
-            className="px-6 py-2.5 text-sm font-medium text-slate-950 bg-amber-500 rounded-lg hover:bg-amber-400 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-300 w-full sm:w-auto shadow-[0_0_20px_rgba(245,158,11,0.2)] hover:shadow-[0_0_25px_rgba(245,158,11,0.4)]"
+            className="px-7 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-amber-500 to-amber-600 rounded-xl hover:from-amber-600 hover:to-amber-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 w-full sm:w-auto shadow-[0_2px_12px_rgba(217,119,6,0.25)] hover:shadow-[0_4px_18px_rgba(217,119,6,0.35)] active:scale-[0.98]"
           >
-            {isProcessing ? 'Processing...' : 'Run extraction'}
+            {isProcessing ? 'Executing Pipeline...' : 'Run Extraction & Score'}
           </button>
         </div>
-      </div>
+
+        {/* 1-Click Interactive Demo Persona Badges */}
+        {onSelectPersona && (
+          <div className="mt-10 pt-6 border-t border-slate-100">
+            <span className="text-[0.6875rem] uppercase tracking-wider text-slate-400 font-semibold block mb-3">
+              Don't have a statement handy? Try an interactive demo profile:
+            </span>
+            <div className="flex flex-wrap items-center justify-center gap-2.5">
+              {DEMO_PERSONAS.map((persona) => (
+                <button
+                  key={persona.id}
+                  type="button"
+                  onClick={() => onSelectPersona(persona.id)}
+                  className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-300 text-slate-700 hover:text-amber-900 text-xs font-medium transition-all shadow-2xs active:scale-[0.98]"
+                >
+                  <span className="text-amber-600 font-semibold mr-1">✦</span>
+                  {persona.name.split(' (')[0]}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </SpotlightCard>
     </div>
   );
 };

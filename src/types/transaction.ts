@@ -103,11 +103,43 @@ export interface ProcessResponse {
   message: string;
 }
 
-export interface TaskStatusResponse {
+export interface TaskTelemetry {
+  stage?: string;
+  stage_index?: number;
+  stage_name?: string;
+  progress?: number;
+  message?: string;
+  total_rows?: number;
+  processed_rows?: number;
+  elapsed_seconds?: number;
+  eta_seconds?: number | null;
+  current_narration?: string | null;
+}
+
+export interface StatementSummaryItem {
+  task_id: string;
+  status: string;
+  filename?: string | null;
+  created_at?: number | null;
+  transaction_count: number;
+  score?: number | null;
+  band?: string | null;
+  archetype?: string | null;
+  processing_time_seconds?: number | null;
+}
+
+export interface EngineStatsResponse {
+  total_statements_processed: number;
+  total_transactions_analyzed: number;
+  avg_processing_time_seconds: number;
+  recent_statements: StatementSummaryItem[];
+}
+
+export interface TaskStatusResponse extends TaskTelemetry {
   task_id: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
-  transactions: Transaction[] | null;
-  report: CreditRiskReport | null;
+  transactions?: Transaction[] | null;
+  report?: CreditRiskReport | null;
   error?: string | null;
 }
 
