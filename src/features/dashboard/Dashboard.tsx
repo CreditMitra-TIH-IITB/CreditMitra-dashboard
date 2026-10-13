@@ -8,6 +8,7 @@ import { CategoryBreakdown } from '../results/CategoryBreakdown';
 import { CashFlow } from '../results/CashFlow';
 import { useProcessStatement } from '../ingest/hooks/useProcessStatement';
 import { StatementHistory } from '../ingest/StatementHistory';
+import { ComponentStatusStrip } from '../settings/ComponentStatusStrip';
 import { Award, PieChart, Table, FileUp, AlertCircle, Sparkles } from 'lucide-react';
 import { DEMO_PERSONAS } from '../../services/mockData';
 
@@ -49,9 +50,10 @@ export const Dashboard: React.FC = () => {
       {/* Upload Section */}
       {!transactions && (
         <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
-          <div className="text-[0.65rem] tracking-[0.2em] uppercase text-slate-500 font-semibold mb-3">
+          <div className="text-[0.65rem] tracking-[0.2em] uppercase text-slate-500 font-semibold mb-1">
             Statement Ingestion Hub
           </div>
+          <ComponentStatusStrip />
           <UploadDropzone
             file={file}
             onFileSelect={setFile}
