@@ -4,8 +4,10 @@ import { MOCK_REPORT, MOCK_TRANSACTIONS } from './mockData';
 
 const isMock = import.meta.env.VITE_USE_MOCK === '1' || import.meta.env.VITE_USE_MOCK === 'true';
 
+const defaultBaseUrl = import.meta.env.DEV ? '/api/v1' : 'http://localhost:8000/api/v1';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/v1',
+  baseURL: import.meta.env.VITE_API_BASE_URL || defaultBaseUrl,
 });
 
 export async function uploadStatementPdf(file: File): Promise<ProcessResponse> {
@@ -48,6 +50,20 @@ export async function fetchTaskReport(taskId: string): Promise<ReportResponse> {
   }
 
   const response = await api.get<ReportResponse>(`/statements/report/${taskId}`);
+  return response.data;
+}
+
+export async function fetchEngineStats(): Promise<import('../types/transaction').EngineStatsResponse> {
+  if (isMock) {
+    return {
+      total_statements_processed: 3,
+      total_transactions_analyzed: 45,
+      avg_processing_time_seconds: 18.4,
+      recent_statements: [],
+    };
+  }
+
+  const response = await api.get<import('../types/transaction').EngineStatsResponse>('/statements/stats');
   return response.data;
 }
 

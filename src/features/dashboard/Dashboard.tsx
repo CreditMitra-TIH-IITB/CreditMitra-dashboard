@@ -7,6 +7,7 @@ import { LifestyleReport } from '../risk/LifestyleReport';
 import { CategoryBreakdown } from '../results/CategoryBreakdown';
 import { CashFlow } from '../results/CashFlow';
 import { useProcessStatement } from '../ingest/hooks/useProcessStatement';
+import { StatementHistory } from '../ingest/StatementHistory';
 import { Award, PieChart, Table, FileUp, AlertCircle, Sparkles } from 'lucide-react';
 import { DEMO_PERSONAS } from '../../services/mockData';
 
@@ -20,6 +21,7 @@ export const Dashboard: React.FC = () => {
     error,
     transactions,
     report,
+    telemetry,
     processFile,
     reset,
     loadPreset,
@@ -46,7 +48,7 @@ export const Dashboard: React.FC = () => {
     <div className="w-full max-w-7xl mx-auto px-6 py-8 md:py-12 flex flex-col gap-8 flex-1">
       {/* Upload Section */}
       {!transactions && (
-        <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
           <div className="text-[0.65rem] tracking-[0.2em] uppercase text-slate-500 font-semibold mb-3">
             Statement Ingestion Hub
           </div>
@@ -57,11 +59,27 @@ export const Dashboard: React.FC = () => {
             isProcessing={isProcessing}
             onSelectPersona={handleSelectPersona}
           />
+          {/* Engine History & Stats */}
+          {!isProcessing && (
+            <StatementHistory
+              onLoadStatement={(txns, rep, name) => {
+                setSelectedPersonaId(name);
+                loadPreset(txns, rep);
+                setActiveTab('report');
+              }}
+            />
+          )}
         </section>
       )}
 
-      {/* Processing Pipeline Stepper HUD */}
-      <ProcessingStatus isProcessing={isProcessing} step={step} progress={progress} error={error} />
+      {/* Processing Pipeline Stepper HUD with Real Telemetry & ETA */}
+      <ProcessingStatus
+        isProcessing={isProcessing}
+        step={step}
+        progress={progress}
+        error={error}
+        telemetry={telemetry}
+      />
 
       {/* Results Navigation & Tab Content */}
       {transactions && transactions.length > 0 && (
