@@ -141,9 +141,14 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Initial load of node telemetry
   useEffect(() => {
-    refreshNodes();
+    const timer = setTimeout(() => {
+      refreshNodes();
+    }, 0);
     const interval = setInterval(refreshNodes, 15000); // refresh every 15s
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, [refreshNodes]);
 
   return (
@@ -167,6 +172,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSystemSettings = () => {
   const context = useContext(SettingsContext);
   if (!context) {

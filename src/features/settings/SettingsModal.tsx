@@ -46,7 +46,8 @@ export const SettingsModal: React.FC = () => {
         api_key: apiKey,
       });
       setTestResults((prev) => ({ ...prev, [component]: res }));
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : 'Connection test failed';
       setTestResults((prev) => ({
         ...prev,
         [component]: {
@@ -54,7 +55,7 @@ export const SettingsModal: React.FC = () => {
           component,
           url,
           latency_ms: 0,
-          details: err?.message || 'Connection test failed',
+          details: errorMsg,
         },
       }));
     } finally {

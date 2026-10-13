@@ -24,7 +24,15 @@ export const StatementHistory: React.FC<StatementHistoryProps> = ({ onLoadStatem
   };
 
   useEffect(() => {
-    loadStats();
+    let isMounted = true;
+    fetchEngineStats()
+      .then((data) => {
+        if (isMounted) setStats(data);
+      })
+      .catch((e) => console.warn('Failed to fetch engine stats:', e));
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleOpenPrevious = async (item: StatementSummaryItem) => {

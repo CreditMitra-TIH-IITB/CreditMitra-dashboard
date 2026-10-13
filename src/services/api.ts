@@ -4,7 +4,7 @@ import { MOCK_REPORT, MOCK_TRANSACTIONS } from './mockData';
 
 const isMock = import.meta.env.VITE_USE_MOCK === '1' || import.meta.env.VITE_USE_MOCK === 'true';
 
-const defaultBaseUrl = import.meta.env.DEV ? '/api/v1' : 'http://localhost:8000/api/v1';
+const defaultBaseUrl = import.meta.env.DEV ? '/api/v1' : 'http://127.0.0.1:8000/api/v1';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || defaultBaseUrl,
@@ -42,40 +42,19 @@ export async function uploadStatementPdf(file: File): Promise<ProcessResponse> {
     return {
       task_id: taskId,
       status: 'pending',
-      message: 'Statement accepted for underwriting inference.',
+      message: 'Statement accepted for underwriting inference (Mock Mode).',
     };
   }
 
-  try {
-    const formData = new FormData();
-    formData.append('pdf', file);
+  const formData = new FormData();
+  formData.append('pdf', file);
 
-    const response = await api.post<ProcessResponse>('/statements/process', formData, {
-      timeout: 5000,
-    });
-    return response.data;
-  } catch (err) {
-    console.warn(
-      'Local engine unreachable or offline. Seamlessly routing statement to dedicated inference node:',
-      err,
-    );
-    const taskId = 'remote-' + Date.now();
-    simulatedTasks.set(taskId, {
-      taskId,
-      filename: file.name,
-      startTime: Date.now(),
-      totalRows: 66,
-    });
-    return {
-      task_id: taskId,
-      status: 'pending',
-      message: 'Statement accepted for underwriting inference on dedicated node.',
-    };
-  }
+  const response = await api.post<ProcessResponse>('/statements/process', formData);
+  return response.data;
 }
 
 export async function fetchTaskStatus(taskId: string): Promise<TaskStatusResponse> {
-  if (isMock || taskId.startsWith('mock-') || taskId.startsWith('remote-')) {
+  if (isMock || taskId.startsWith('mock-')) {
     const task = simulatedTasks.get(taskId) || {
       taskId,
       filename: 'Statement.pdf',
@@ -178,16 +157,12 @@ export async function fetchTaskStatus(taskId: string): Promise<TaskStatusRespons
     }
   }
 
-  try {
-    const response = await api.get<TaskStatusResponse>(`/statements/status/${taskId}`);
-    return response.data;
-  } catch (err) {
-    throw err;
-  }
+  const response = await api.get<TaskStatusResponse>(`/statements/status/${taskId}`);
+  return response.data;
 }
 
 export async function fetchTaskReport(taskId: string): Promise<ReportResponse> {
-  if (isMock || taskId.startsWith('mock-') || taskId.startsWith('remote-')) {
+  if (isMock || taskId.startsWith('mock-')) {
     return {
       task_id: taskId,
       status: 'completed',

@@ -88,40 +88,59 @@ export const Dashboard: React.FC = () => {
         <section className="mt-2 space-y-6">
           {/* Persona Switcher Banner if in Demo mode */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-white border border-slate-200/90 rounded-2xl shadow-2xs">
-            <div className="flex items-center gap-2">
-              <span className="flex h-2 w-2 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-2.5 w-2.5 relative">
+                <span
+                  className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                    selectedPersonaId ? 'bg-amber-400' : 'bg-emerald-400'
+                  }`}
+                />
+                <span
+                  className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
+                    selectedPersonaId ? 'bg-amber-500' : 'bg-emerald-500'
+                  }`}
+                />
               </span>
-              <span className="text-xs font-semibold text-slate-800">
-                {selectedPersonaId
-                  ? `Active Profile: ${DEMO_PERSONAS.find((p) => p.id === selectedPersonaId)?.name}`
-                  : 'Custom Statement Ingested'}
-              </span>
+              <div>
+                <span className="text-xs font-semibold text-slate-800 block">
+                  {selectedPersonaId
+                    ? `Demo Profile: ${DEMO_PERSONAS.find((p) => p.id === selectedPersonaId)?.name}`
+                    : `Ingested Statement: ${file?.name || 'Verified Bank Statement'}`}
+                </span>
+                <span className="text-[10px] text-slate-400 font-mono">
+                  {selectedPersonaId
+                    ? 'Static simulated profile for showcase comparison'
+                    : `${transactions.length} transactions extracted & scored via on-device engine`}
+                </span>
+              </div>
             </div>
 
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[11px] text-slate-400 hidden lg:inline">Switch profile:</span>
-              {DEMO_PERSONAS.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => handleSelectPersona(p.id)}
-                  className={`px-3 py-1 text-xs rounded-xl transition-all ${
-                    selectedPersonaId === p.id
-                      ? 'bg-amber-100/90 text-amber-900 border border-amber-300 font-semibold shadow-2xs'
-                      : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200/80'
-                  }`}
-                >
-                  <Sparkles size={11} className="inline mr-1 text-amber-600" />
-                  {p.name.split(' (')[0]}
-                </button>
-              ))}
+              {selectedPersonaId && (
+                <>
+                  <span className="text-[11px] text-slate-400 hidden lg:inline">Switch demo profile:</span>
+                  {DEMO_PERSONAS.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => handleSelectPersona(p.id)}
+                      className={`px-3 py-1 text-xs rounded-xl transition-all ${
+                        selectedPersonaId === p.id
+                          ? 'bg-amber-100/90 text-amber-900 border border-amber-300 font-semibold shadow-2xs'
+                          : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200/80'
+                      }`}
+                    >
+                      <Sparkles size={11} className="inline mr-1 text-amber-600" />
+                      {p.name.split(' (')[0]}
+                    </button>
+                  ))}
+                </>
+              )}
 
               <button
                 onClick={handleReset}
-                className="flex items-center gap-1.5 px-3 py-1 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:text-amber-800 hover:border-amber-300 hover:bg-amber-50 transition-all shadow-2xs ml-auto sm:ml-2"
+                className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl hover:text-amber-800 hover:border-amber-300 hover:bg-amber-50 transition-all shadow-2xs ml-auto sm:ml-2"
               >
-                <FileUp size={13} className="text-slate-500" />
+                <FileUp size={13} className="text-amber-600" />
                 Upload New Statement
               </button>
             </div>
