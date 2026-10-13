@@ -123,6 +123,19 @@ export const ProcessingStatus: React.FC<ProcessingStatusProps> = ({
         </div>
       </div>
 
+      {/* Error Callout Banner */}
+      {error && (
+        <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 space-y-2.5 animate-in fade-in duration-300">
+          <div className="flex items-start gap-3">
+            <AlertCircle size={18} className="text-rose-600 mt-0.5 shrink-0" />
+            <div className="flex-1">
+              <h4 className="font-semibold text-sm">Pipeline Execution Note</h4>
+              <p className="text-xs text-rose-800/90 mt-0.5 leading-relaxed">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Real Live Metrics Strip */}
       {isProcessing && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">

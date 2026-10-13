@@ -138,8 +138,8 @@ export interface EngineStatsResponse {
 export interface TaskStatusResponse extends TaskTelemetry {
   task_id: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
-  transactions: Transaction[] | null;
-  report: CreditRiskReport | null;
+  transactions?: Transaction[] | null;
+  report?: CreditRiskReport | null;
   error?: string | null;
 }
 
