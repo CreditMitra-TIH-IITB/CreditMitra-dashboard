@@ -3,29 +3,35 @@ import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { Dashboard } from '../features/dashboard/Dashboard';
 
+import { SettingsProvider } from '../features/settings/SettingsContext';
+import { SettingsModal } from '../features/settings/SettingsModal';
+
 const AppLayout = () => {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col font-sans selection:bg-amber-500/30">
-      {/* Background grain effect */}
-      <div
-        className="fixed inset-0 pointer-events-none opacity-[0.035] z-0"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
-        }}
-      />
-      <div className="relative z-10 flex flex-col flex-1">
-        <Header />
-        <Outlet />
-        <Footer />
+    <SettingsProvider>
+      <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans selection:bg-amber-200/60 selection:text-amber-900 relative">
+        {/* Subtle top ambient radial lighting */}
+        <div
+          className="fixed top-0 left-0 right-0 h-96 pointer-events-none z-0"
+          style={{
+            background:
+              'radial-gradient(ellipse 70% 50% at 50% -10%, rgba(245, 158, 11, 0.07), transparent 70%), radial-gradient(ellipse 50% 40% at 85% 0%, rgba(99, 102, 241, 0.04), transparent 60%)',
+          }}
+        />
+        <div className="relative z-10 flex flex-col flex-1">
+          <Header />
+          <Outlet />
+          <Footer />
+        </div>
+        <SettingsModal />
       </div>
-    </div>
+    </SettingsProvider>
   );
 };
 
 const NotFound = () => (
-  <div className="flex flex-col items-center justify-center min-h-screen text-slate-400">
-    <h1 className="text-3xl font-serif text-white mb-2">404 - Page Not Found</h1>
+  <div className="flex flex-col items-center justify-center min-h-screen text-slate-500 bg-[#F8FAFC]">
+    <h1 className="text-3xl font-serif text-slate-900 mb-2">404 - Page Not Found</h1>
     <p>The requested route does not exist.</p>
   </div>
 );

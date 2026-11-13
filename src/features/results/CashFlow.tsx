@@ -26,14 +26,18 @@ export const CashFlow: React.FC<CashFlowProps> = ({ transactions }) => {
   const netFlow = totalCredits - totalDebits;
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-slate-900/40 p-6 backdrop-blur-md space-y-4">
-      <div className="flex items-center justify-between border-b border-white/10 pb-3">
-        <h3 className="font-serif text-lg font-medium text-white flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-emerald-400" />
-          Cash-Flow Overview
+    <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm space-y-4">
+      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 className="font-serif text-lg font-medium text-slate-900 flex items-center gap-2">
+          <BarChart3 className="w-5 h-5 text-emerald-600" />
+          Cash-Flow Balance
         </h3>
         <span
-          className={`text-xs font-semibold ${netFlow >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}
+          className={`text-xs font-semibold font-mono px-2.5 py-0.5 rounded-full border shadow-2xs ${
+            netFlow >= 0
+              ? 'text-emerald-800 bg-emerald-50 border-emerald-200'
+              : 'text-rose-800 bg-rose-50 border-rose-200'
+          }`}
         >
           Net Flow: {netFlow >= 0 ? '+' : ''}₹{Math.round(netFlow).toLocaleString('en-IN')}
         </span>
@@ -42,30 +46,30 @@ export const CashFlow: React.FC<CashFlowProps> = ({ transactions }) => {
       <div className="grid grid-cols-2 gap-4 items-end pt-4 h-48">
         {/* Total Inflow (Credits) Bar */}
         <div className="flex flex-col items-center gap-2 h-full justify-end">
-          <span className="text-xs font-bold text-emerald-400">
+          <span className="text-xs font-bold text-emerald-700 font-mono">
             ₹{Math.round(totalCredits).toLocaleString('en-IN')}
           </span>
-          <div className="w-full bg-slate-950/80 rounded-xl p-1 border border-white/5 h-36 flex items-end">
+          <div className="w-full bg-slate-100 rounded-xl p-1 border border-slate-200/70 h-36 flex items-end shadow-inner">
             <div
-              className="w-full bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-lg transition-all duration-700"
+              className="w-full bg-gradient-to-t from-emerald-600 to-emerald-500 rounded-lg transition-all duration-700 shadow-2xs"
               style={{ height: `${Math.max(8, creditHeight)}%` }}
             />
           </div>
-          <span className="text-xs text-slate-400 font-medium">Inflow (Credits)</span>
+          <span className="text-xs text-slate-600 font-medium">Inflow (Credits)</span>
         </div>
 
         {/* Total Outflow (Debits) Bar */}
         <div className="flex flex-col items-center gap-2 h-full justify-end">
-          <span className="text-xs font-bold text-rose-400">
+          <span className="text-xs font-bold text-rose-700 font-mono">
             ₹{Math.round(totalDebits).toLocaleString('en-IN')}
           </span>
-          <div className="w-full bg-slate-950/80 rounded-xl p-1 border border-white/5 h-36 flex items-end">
+          <div className="w-full bg-slate-100 rounded-xl p-1 border border-slate-200/70 h-36 flex items-end shadow-inner">
             <div
-              className="w-full bg-gradient-to-t from-rose-600 to-rose-400 rounded-lg transition-all duration-700"
+              className="w-full bg-gradient-to-t from-rose-600 to-rose-500 rounded-lg transition-all duration-700 shadow-2xs"
               style={{ height: `${Math.max(8, debitHeight)}%` }}
             />
           </div>
-          <span className="text-xs text-slate-400 font-medium">Outflow (Debits)</span>
+          <span className="text-xs text-slate-600 font-medium">Outflow (Debits)</span>
         </div>
       </div>
     </div>

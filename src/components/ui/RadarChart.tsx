@@ -56,7 +56,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({ lifestyle }) => {
               key={levelIdx}
               points={points}
               fill="none"
-              stroke="rgba(255, 255, 255, 0.08)"
+              stroke="#e2e8f0"
               strokeWidth="1"
             />
           );
@@ -72,7 +72,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({ lifestyle }) => {
               y1={center}
               x2={x}
               y2={y}
-              stroke="rgba(255, 255, 255, 0.12)"
+              stroke="#cbd5e1"
               strokeWidth="1"
               strokeDasharray="2 2"
             />
@@ -82,17 +82,26 @@ export const RadarChart: React.FC<RadarChartProps> = ({ lifestyle }) => {
         {/* Data Polygon Fill & Outline */}
         <polygon
           points={polygonPoints}
-          fill="rgba(245, 158, 11, 0.25)"
-          stroke="#f59e0b"
+          fill="rgba(217, 119, 6, 0.18)"
+          stroke="#d97706"
           strokeWidth="2.5"
-          className="transition-all duration-700 ease-in-out hover:fill-amber-500/40"
+          className="transition-all duration-700 ease-in-out hover:fill-amber-500/25"
         />
 
         {/* Data Points */}
         {axes.map((axis, i) => {
           const { x, y } = getCoordinates(i, axis.value);
           return (
-            <circle key={i} cx={x} cy={y} r="4" fill="#fbbf24" stroke="#0f172a" strokeWidth="2" />
+            <circle
+              key={i}
+              cx={x}
+              cy={y}
+              r="4.5"
+              fill="#d97706"
+              stroke="#ffffff"
+              strokeWidth="2"
+              className="drop-shadow-xs"
+            />
           );
         })}
 
@@ -106,7 +115,7 @@ export const RadarChart: React.FC<RadarChartProps> = ({ lifestyle }) => {
               y={labelCoords.y}
               textAnchor="middle"
               dominantBaseline="middle"
-              className="fill-slate-400 text-[10px] font-medium tracking-tight"
+              className="fill-slate-600 text-[10px] font-semibold tracking-tight"
             >
               {axis.label} ({axis.value})
             </text>
